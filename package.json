@@ -1,0 +1,14 @@
+{
+  "private": true,
+  "devDependencies": {
+    "@11ty/eleventy": "^2.0.1",
+    "lightningcss": "^1.22.0"
+  },
+  "scripts": {
+    "start": "eleventy --serve "
+  },
+  "browserslist": [
+    "last 2 version",
+    "not dead"
+  ]
+}

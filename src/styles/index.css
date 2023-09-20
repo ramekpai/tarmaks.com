@@ -1,0 +1,19 @@
+/* Global */
+
+@import 'global/box-model.css';
+@import 'global/focus-visible.css';
+@import 'global/fonts.css';
+
+/* Colors */
+
+@import 'colors/index.css';
+
+/* Sizes */
+
+@import 'sizes/mobile.css';
+@import 'sizes/tablet.css';
+@import 'sizes/desktop.css';
+
+/* Blocks */
+
+@import 'blocks/page/index.css';

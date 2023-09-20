@@ -1,0 +1,7 @@
+:root {
+	color-scheme: light;
+
+	--color-back-primary: oklch(var(--color-dough));
+
+	--color-text-primary: oklch(var(--color-charcoal-laquer));
+}
