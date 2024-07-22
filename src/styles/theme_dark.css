@@ -1,0 +1,4 @@
+html[data-color-theme='dark'] {
+  --color: var(--color-gray-50);
+  --background-color: var(--color-gray-800);
+}

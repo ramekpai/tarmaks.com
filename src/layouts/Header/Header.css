@@ -1,0 +1,28 @@
+.header {
+  color: var(--color);
+  background-color: var(--background-color);
+  padding-bottom: 12px;
+  padding-top: 12px;
+}
+
+.menu {
+  display: flex;
+  justify-content: flex-start;
+  align-items: flex-end;
+}
+
+.menu__logo {
+  display: inline-flex;
+}
+
+.menu__list {
+  display: flex;
+  margin-block-start: unset;
+  margin-block-end: unset;
+  list-style-type: none;
+  gap: 12px;
+}
+
+.menu__logo ~ .menu__list {
+  margin-left: 24px;
+}

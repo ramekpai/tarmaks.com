@@ -1,0 +1,48 @@
+@import './reset.css';
+@import './design_tokens.css';
+@import './theme_light.css';
+
+html {
+  font-family: system-ui, sans-serif;
+}
+
+code {
+  font-family:
+    Menlo,
+    Monaco,
+    Lucida Console,
+    Liberation Mono,
+    DejaVu Sans Mono,
+    Bitstream Vera Sans Mono,
+    Courier New,
+    monospace;
+}
+
+.content-wrapper {
+  --content-gutter: 16px;
+
+  max-width: 1280px;
+  width: 100%;
+  margin-right: auto;
+  margin-left: auto;
+  padding-right: var(--content-gutter);
+  padding-left: var(--content-gutter);
+}
+
+@media screen and (width >=1920px) {
+  .content-wrapper {
+    max-width: 1048px;
+  }
+}
+
+@media screen and (width >=2560px) {
+  .content-wrapper {
+    max-width: calc(1920px - var(--content-gutter) * 2);
+  }
+}
+
+@media screen and (width >=3840px) {
+  .content-wrapper {
+    max-width: calc(2560px - var(--content-gutter) * 2);
+  }
+}

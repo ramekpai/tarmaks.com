@@ -1,8 +1,0 @@
-:root {
-	--color-dough: 98.45% 0.007 97.35;
-	--color-charcoal-laquer: 28.91% 0 0;
-
-	--color-indigo-flower-grey: 61.54% 0.164 262.59;
-
-	--color-focus-ring: oklch(var(--color-indigo-flower-grey));
-}

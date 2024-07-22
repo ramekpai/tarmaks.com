@@ -1,14 +1,17 @@
 {
-  "private": true,
-  "devDependencies": {
-    "@11ty/eleventy": "^2.0.1",
-    "lightningcss": "^1.22.0"
-  },
+  "name": "",
+  "type": "module",
+  "version": "0.0.1",
   "scripts": {
-    "start": "eleventy --serve "
+    "dev": "astro dev",
+    "start": "astro dev",
+    "build": "astro check && astro build",
+    "preview": "astro preview",
+    "astro": "astro"
   },
-  "browserslist": [
-    "last 2 version",
-    "not dead"
-  ]
+  "dependencies": {
+    "astro": "^4.12.2",
+    "@astrojs/check": "^0.8.2",
+    "typescript": "^5.5.3"
+  }
 }
