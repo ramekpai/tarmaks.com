@@ -1,0 +1,36 @@
+---
+import TelegramLogo from '../../Icons/TelegramLogo.astro';
+import GithubLogo from '../../Icons/GithubLogo.astro';
+import './Socials.css';
+
+const socials = [
+  {
+    label: 'telegram',
+    href: 'https://t.me/ramekpai/',
+    icon: TelegramLogo,
+  },
+  {
+    label: 'github',
+    href: 'https://github.com/ramekpai/',
+    icon: GithubLogo,
+  },
+];
+---
+
+<ul class="socials">
+  {
+    socials.map(({ label, href, icon: Icon }) => (
+      <li>
+        <a
+          class="socials__link"
+          href={href}
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          <span class="visually-hidden">{label}</span>
+          <Icon />
+        </a>
+      </li>
+    ))
+  }
+</ul>

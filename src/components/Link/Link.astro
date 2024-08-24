@@ -1,0 +1,17 @@
+---
+import type { HTMLAttributes } from 'astro/types';
+import './Link.css';
+
+type Props = HTMLAttributes<'a'>;
+
+const { target, rel, ...rest } = Astro.props;
+---
+
+<a
+  class="link"
+  {...rest}
+  target={target}
+  rel={rel || target === '_blank' ? 'noopener noreferrer' : ''}
+>
+  <slot />
+</a>

@@ -1,0 +1,23 @@
+.link {
+  @media (prefers-color-scheme: light) {
+    --link-color: var(--color-info-500);
+    --link-color-active: var(--color-info-600);
+  }
+
+  @media (prefers-color-scheme: dark) {
+    --link-color: var(--color-info-300);
+    --link-color-active: var(--color-info-400);
+  }
+
+  color: var(--link-color);
+  text-decoration: underline;
+  transition: all 0.2s ease-in-out;
+}
+
+.link:hover {
+  text-decoration: none;
+}
+
+.link:active {
+  color: var(--link-color-active);
+}

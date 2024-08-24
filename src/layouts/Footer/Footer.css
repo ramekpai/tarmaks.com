@@ -1,6 +1,24 @@
 .footer {
   color: var(--color);
-  background-color: var(--background-color);
   padding-bottom: 12px;
   padding-top: 12px;
+  position: sticky;
+  bottom: 0;
+  width: 100%;
+
+  .block {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    justify-content: flex-end;
+  }
+}
+
+.footer::before {
+  content: '';
+  z-index: 1;
+  display: block;
+  position: absolute;
+  inset: 0;
+  backdrop-filter: blur(6px);
 }

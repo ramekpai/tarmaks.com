@@ -8,11 +8,7 @@
 .menu {
   display: flex;
   justify-content: flex-start;
-  align-items: flex-end;
-}
-
-.menu__logo {
-  display: inline-flex;
+  align-items: center;
 }
 
 .menu__list {

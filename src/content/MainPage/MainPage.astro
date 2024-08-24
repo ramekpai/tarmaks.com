@@ -1,10 +1,48 @@
 ---
+import Link from '../../components/Link/Link.astro';
 import './MainPage.css';
 ---
 
 <main class="main">
-  <div class="intro content-wrapper">
-    <p class="intro__hi">Привет, меня&nbsp;зовут</p>
-    <h1 class="intro__name">Максим Тарасов</h1>
+  <div class="content-wrapper main-page">
+    <div class="block intro">
+      <p class="intro__hi">Привет, меня&nbsp;зовут</p>
+      <h1 class="intro__name">Максим&nbsp;Тарасов</h1>
+    </div>
+    <div class="block">
+      <p>
+        Я фронтенд-разработчик влюблённый в веб, доступность, интерфейсы и с
+        желанием создавать лучшие UI&nbsp;и&nbsp;UX
+      </p>
+    </div>
+    <div class="block">
+      <p>
+        Профессиональный опыт преимущественно связан с продуктовой разработкой в
+        scrum-команде, а именно:
+      </p>
+      <ul>
+        <li>
+          участие в разработке флагманского продукта компании в виде
+          <Link href="https://www.etagi.com/" target="_blank">
+            www.etagi.com
+          </Link> с более чем 3&nbsp;000&nbsp;000 уникальных посетителей в месяц
+        </li>
+        <li>
+          разработка
+          <Link href="https://storybook.etagi.com/" target="_blank">
+            storybook.etagi.com
+          </Link>
+          как личного проекта в рамках компании (контролирую весь цикл разработки
+          от согласований с дизайнерами, до деплоя сторибука и внедрения ui-kit'а
+          в основной продукт компании)
+        </li>
+        <li>рефакторинг, улучшение и оптимизация кодовой базы</li>
+        <li>внедрение новых инструментов и полезных практик</li>
+        <li>
+          активное участие в различных митингах, проведение код-ревью,
+          менторство
+        </li>
+      </ul>
+    </div>
   </div>
 </main>
