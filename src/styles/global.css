@@ -1,5 +1,5 @@
 @import './reset.css';
-@import './design_tokens.css';
+@import './tokens.css';
 
 html {
   @media (prefers-color-scheme: light) {
@@ -12,7 +12,8 @@ html {
     --background-color: var(--color-gray-800);
   }
 
-  font-family: -apple-system, ui-sans-serif, system-ui, BlinkMacSystemFont, Segoe UI, Ubuntu, sans-serif;
+  font-family: -apple-system, ui-sans-serif, system-ui, BlinkMacSystemFont,
+    Segoe UI, Ubuntu, sans-serif;
   font-weight: 400;
   font-size: 16px;
   line-height: 1.2;

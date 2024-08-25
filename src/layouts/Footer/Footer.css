@@ -5,13 +5,6 @@
   position: sticky;
   bottom: 0;
   width: 100%;
-
-  .block {
-    position: relative;
-    z-index: 2;
-    display: flex;
-    justify-content: flex-end;
-  }
 }
 
 .footer::before {
@@ -21,4 +14,11 @@
   position: absolute;
   inset: 0;
   backdrop-filter: blur(6px);
+}
+
+.footer .block {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  justify-content: flex-end;
 }

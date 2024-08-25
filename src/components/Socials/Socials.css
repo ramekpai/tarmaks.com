@@ -5,25 +5,25 @@
   padding-inline-start: unset;
   display: flex;
   flex-flow: row nowrap;
+}
 
-  li + li {
-    margin-left: 16px;
-  }
+.socials li + li {
+  margin-left: 16px;
+}
 
-  a {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 32px;
-    height: 32px;
-    color: var(--color);
-  }
+.socials a {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 32px;
+  height: 32px;
+  color: var(--color);
+}
 
-  a:hover {
-    color: var(--color);
-  }
+.socials a:hover {
+  color: var(--color);
+}
 
-  svg {
-    width: 100%;
-  }
+.socials svg {
+  width: 100%;
 }
