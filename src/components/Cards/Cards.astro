@@ -1,0 +1,27 @@
+---
+import cn from 'classnames';
+import './Cards.css';
+
+export interface CardsProps {
+  as?: 'div' | 'ul';
+  className?: string;
+  bentoCols?: number;
+}
+
+const {
+  as: Element = 'div',
+  className,
+  bentoCols = 6,
+}: CardsProps = Astro.props;
+---
+
+<Element
+  class={cn(
+    'cards',
+    'container',
+    className,
+    bentoCols ? [`bento-grid-${bentoCols}`] : undefined
+  )}
+>
+  <slot />
+</Element>

@@ -1,0 +1,33 @@
+---
+import cn from 'classnames';
+import './CardsItem.css';
+
+export interface CardProps {
+  as?: 'div' | 'ul';
+  bentoWidth?: number;
+}
+
+const { slots, props } = Astro;
+const { as: Element = 'div', bentoWidth }: CardProps = props;
+---
+
+<Element
+  class={cn(
+    'card',
+    bentoWidth ? [`bento-width-${bentoWidth}`] : undefined
+  )}
+>
+  <div class="card__content">
+    <div class="card__icon" aria-hidden="true">
+      <slot name="icon" />
+    </div>
+    {slots.has('title') && (
+      <div class="card__title">
+        <slot name="title" />
+      </div>
+    )}
+    <div class="card__description">
+      <slot name="description" />
+    </div>
+  </div>
+</Element>

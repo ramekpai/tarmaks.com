@@ -1,4 +1,11 @@
 ---
+import BoxIso from '../../Icons/BoxIso.astro';
+import Community from '../../Icons/Community.astro';
+import MagicWand from '../../Icons/MagicWand.astro';
+import Sparks from '../../Icons/Sparks.astro';
+import Throphy from '../../Icons/Throphy.astro';
+import Cards from '../../components/Cards/Cards.astro';
+import CardsItem from '../../components/Cards/CardsItem.astro';
 import Link from '../../components/Link/Link.astro';
 import './MainPage.css';
 ---
@@ -16,33 +23,64 @@ import './MainPage.css';
       </p>
     </div>
     <div class="block">
-      <p>
+      <p class="block__description">
         Профессиональный опыт преимущественно связан с продуктовой разработкой в
         scrum-команде, а именно:
       </p>
-      <ul>
-        <li>
-          участие в разработке флагманского продукта компании в виде
-          <Link href="https://www.etagi.com/" target="_blank">
-            www.etagi.com
-          </Link> с более чем 3&nbsp;000&nbsp;000 уникальных посетителей в месяц
-        </li>
-        <li>
-          разработка
-          <Link href="https://storybook.etagi.com/" target="_blank">
-            storybook.etagi.com
-          </Link>
-          как личного проекта в рамках компании (контролирую весь цикл разработки
-          от согласований с дизайнерами, до деплоя сторибука и внедрения ui-kit'а
-          в основной продукт компании)
-        </li>
-        <li>рефакторинг, улучшение и оптимизация кодовой базы</li>
-        <li>внедрение новых инструментов и полезных практик</li>
-        <li>
-          активное участие в различных митингах, проведение код-ревью,
-          менторство
-        </li>
-      </ul>
+      <div class="block__content">
+        <Cards as="ul" className="purge-ul" bentoCols={6}>
+          <CardsItem
+            as="li"
+            bentoWidth={4}
+          >
+            <Throphy slot="icon" />
+            <span slot="title">Масштабные решения</span>
+            <span slot="description">
+              Разработка международного мультиязычного продукта
+              <Link href="https://www.etagi.com/" target="_blank">
+                www.etagi.com
+              </Link> с более чем 3&nbsp;000&nbsp;000 уникальных посетителей в месяц
+            </span>
+          </CardsItem>
+          <CardsItem as="li" bentoWidth={2}>
+            <MagicWand slot="icon" />
+            <span slot="title">Улучшение продуктов</span>
+            <span slot="description">
+              Рефакторинг и оптимизация кодовой базы, повышение метрик и показателей
+            </span>
+          </CardsItem>
+          <CardsItem as="li" bentoWidth={6}>
+            <BoxIso slot="icon" />
+            <span slot="title">Собственный ui-kit</span>
+            <span slot="description">
+              Реализация
+              <Link href="https://storybook.etagi.com/" target="_blank">
+                storybook.etagi.com
+              </Link>
+              как личного проекта в рамках компании. Участие в дизайне,
+              разработка, документация и интеграция во флагманский продукт
+              компании
+            </span>
+          </CardsItem>
+          <CardsItem as="li" bentoWidth={3}>
+            <Sparks slot="icon" />
+            <span slot="title">Общее развитие</span>
+            <span slot="description">
+              Внедрение новых инструментов и полезных практик,
+              оптимизация и улучшение процессов
+            </span>
+          </CardsItem>
+          <CardsItem as="li" bentoWidth={3}>
+            <Community slot="icon" />
+            <span slot="title">Командная работа</span>
+            <span slot="description">
+              Активное участие в различных митингах, проведение код-ревью,
+              менторство и помощь членам команды
+            </span>
+          </CardsItem>
+        </Cards>
+      </div>
     </div>
+    <div></div>
   </div>
 </main>

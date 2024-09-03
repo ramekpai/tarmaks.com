@@ -1,0 +1,62 @@
+.card {
+  border: 1px solid var(--color-gray-200);
+  border-radius: 12px;
+  padding: 12px;
+  position: relative;
+}
+
+.card__icon {
+  width: 36px;
+  height: 36px;
+}
+
+.card__title {
+  display: block;
+  margin-top: 16px;
+  font-size: 20px;
+  line-height: 1.4;
+  font-weight: 700;
+}
+
+.card__description {
+  display: block;
+  margin-top: 4px;
+  font-size: 16px;
+  line-height: 1.4;
+}
+
+.bento-width-1 {
+  @media screen and (min-width: 768px) {
+    grid-column: span 1;
+  }
+}
+
+.bento-width-2 {
+  @media screen and (min-width: 768px) {
+    grid-column: span 2;
+  }
+}
+
+.bento-width-3 {
+  @media screen and (min-width: 768px) {
+    grid-column: span 3;
+  }
+}
+
+.bento-width-4 {
+  @media screen and (min-width: 768px) {
+    grid-column: span 4;
+  }
+}
+
+.bento-width-5 {
+  @media screen and (min-width: 768px) {
+    grid-column: span 5;
+  }
+}
+
+.bento-width-6 {
+  @media screen and (min-width: 768px) {
+    grid-column: span 6;
+  }
+}

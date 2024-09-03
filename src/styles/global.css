@@ -49,3 +49,10 @@ html {
   padding-right: var(--content-gutter);
   padding-left: var(--content-gutter);
 }
+
+.purge-ul {
+  list-style-type: none;
+  margin-block-start: unset;
+  margin-block-end: unset;
+  padding-inline-start: unset;
+}
