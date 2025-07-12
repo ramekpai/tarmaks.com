@@ -1,0 +1,73 @@
+name: Deploy to Server
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+    
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version-file: '.nvmrc'
+        cache: 'pnpm'
+    
+    - name: Enable Corepack
+      run: corepack enable
+    
+    - name: Install dependencies
+      run: pnpm install --frozen-lockfile
+    
+    - name: Build project
+      run: pnpm run build
+    
+    - name: Deploy to server
+      uses: appleboy/ssh-action@v1.0.3
+      with:
+        host: ${{ secrets.HOST }}
+        username: ${{ secrets.USERNAME }}
+        key: ${{ secrets.SSH_PRIVATE_KEY }}
+        port: 22
+        script: |
+          # Backup old dist directory if it exists
+          if [ -d "${{ secrets.DEPLOY_PATH }}/dist" ]; then
+            sudo mv ${{ secrets.DEPLOY_PATH }}/dist ${{ secrets.DEPLOY_PATH }}/dist.backup.$(date +%Y%m%d_%H%M%S)
+          fi
+          
+          sudo mkdir -p ${{ secrets.DEPLOY_PATH }}/dist
+          sudo chown ${{ secrets.USERNAME }}:${{ secrets.USERNAME }} ${{ secrets.DEPLOY_PATH }}/dist
+    
+    - name: Copy files to server
+      uses: appleboy/scp-action@v0.1.7
+      with:
+        host: ${{ secrets.HOST }}
+        username: ${{ secrets.USERNAME }}
+        key: ${{ secrets.SSH_PRIVATE_KEY }}
+        port: 22
+        source: "dist/*"
+        target: "${{ secrets.DEPLOY_PATH }}/"
+        strip_components: 1
+    
+    - name: Set correct permissions
+      uses: appleboy/ssh-action@v1.0.3
+      with:
+        host: ${{ secrets.HOST }}
+        username: ${{ secrets.USERNAME }}
+        key: ${{ secrets.SSH_PRIVATE_KEY }}
+        port: 22
+        script: |
+          sudo chown -R www-data:www-data ${{ secrets.DEPLOY_PATH }}/dist
+          sudo chmod -R 755 ${{ secrets.DEPLOY_PATH }}/dist
+          
+          # Remove old backups, keeping the last 3
+          cd ${{ secrets.DEPLOY_PATH }}
+          sudo ls -1t dist.backup.* 2>/dev/null | tail -n +4 | sudo xargs -r rm -rf
+          
+          echo "Deployment completed successfully!"

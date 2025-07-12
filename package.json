@@ -1,5 +1,6 @@
 {
   "private": true,
+  "packageManager": "pnpm@8.15.0",
   "scripts": {
     "start": "astro dev",
     "build": "astro check && astro build",
