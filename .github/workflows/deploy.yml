@@ -31,6 +31,9 @@ jobs:
     - name: Build project
       run: pnpm run build
     
+    - name: List build output
+      run: ls -la dist/
+    
     - name: Deploy to server
       uses: appleboy/ssh-action@v1.0.3
       with:
@@ -54,8 +57,7 @@ jobs:
         key: ${{ secrets.SSH_PRIVATE_KEY }}
         port: 22
         source: "dist/*"
-        target: "${{ secrets.DEPLOY_PATH }}/"
-        strip_components: 1
+        target: "${{ secrets.DEPLOY_PATH }}/dist/"
     
     - name: Set correct permissions
       uses: appleboy/ssh-action@v1.0.3
@@ -65,9 +67,11 @@ jobs:
         key: ${{ secrets.SSH_PRIVATE_KEY }}
         port: 22
         script: |
-          # Set permissions (only if needed)
-          # chown -R www-data:www-data ${{ secrets.DEPLOY_PATH }}/dist
-          # chmod -R 755 ${{ secrets.DEPLOY_PATH }}/dist
+          # List files after copying
+          echo "Files in deploy path:"
+          ls -la ${{ secrets.DEPLOY_PATH }}/
+          echo "Files in dist directory:"
+          ls -la ${{ secrets.DEPLOY_PATH }}/dist/
           
           # Remove old backups, keeping the last 3
           cd ${{ secrets.DEPLOY_PATH }}
