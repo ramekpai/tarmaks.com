@@ -41,11 +41,10 @@ jobs:
         script: |
           # Backup old dist directory if it exists
           if [ -d "${{ secrets.DEPLOY_PATH }}/dist" ]; then
-            sudo mv ${{ secrets.DEPLOY_PATH }}/dist ${{ secrets.DEPLOY_PATH }}/dist.backup.$(date +%Y%m%d_%H%M%S)
+            mv ${{ secrets.DEPLOY_PATH }}/dist ${{ secrets.DEPLOY_PATH }}/dist.backup.$(date +%Y%m%d_%H%M%S)
           fi
           
-          sudo mkdir -p ${{ secrets.DEPLOY_PATH }}/dist
-          sudo chown ${{ secrets.USERNAME }}:${{ secrets.USERNAME }} ${{ secrets.DEPLOY_PATH }}/dist
+          mkdir -p ${{ secrets.DEPLOY_PATH }}/dist
     
     - name: Copy files to server
       uses: appleboy/scp-action@v0.1.7
@@ -66,11 +65,12 @@ jobs:
         key: ${{ secrets.SSH_PRIVATE_KEY }}
         port: 22
         script: |
-          sudo chown -R www-data:www-data ${{ secrets.DEPLOY_PATH }}/dist
-          sudo chmod -R 755 ${{ secrets.DEPLOY_PATH }}/dist
+          # Set permissions (only if needed)
+          # chown -R www-data:www-data ${{ secrets.DEPLOY_PATH }}/dist
+          # chmod -R 755 ${{ secrets.DEPLOY_PATH }}/dist
           
           # Remove old backups, keeping the last 3
           cd ${{ secrets.DEPLOY_PATH }}
-          sudo ls -1t dist.backup.* 2>/dev/null | tail -n +4 | sudo xargs -r rm -rf
+          ls -1t dist.backup.* 2>/dev/null | tail -n +4 | xargs -r rm -rf
           
           echo "Deployment completed successfully!"
