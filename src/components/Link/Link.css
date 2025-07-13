@@ -9,6 +9,7 @@
     --link-color-active: var(--color-info-400);
   }
 
+  display: inline-block;
   color: var(--link-color);
   text-decoration: underline;
   transition: all 0.2s ease-in-out;

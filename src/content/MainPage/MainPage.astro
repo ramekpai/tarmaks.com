@@ -1,4 +1,5 @@
 ---
+import { getLangFromUrl, useTranslations } from '../../i18n';
 import BoxIso from '../../Icons/BoxIso.astro';
 import Community from '../../Icons/Community.astro';
 import MagicWand from '../../Icons/MagicWand.astro';
@@ -8,24 +9,30 @@ import Cards from '../../components/Cards/Cards.astro';
 import CardsItem from '../../components/Cards/CardsItem.astro';
 import Link from '../../components/Link/Link.astro';
 import './MainPage.css';
+
+export interface Props {
+  lang?: string;
+}
+
+const { lang } = Astro.props;
+const currentLang = lang || getLangFromUrl(Astro.url);
+const t = useTranslations(currentLang);
 ---
 
 <main class="main">
   <div class="content-wrapper main-page">
     <div class="block intro">
-      <p class="intro__hi">Привет, меня&nbsp;зовут</p>
-      <h1 class="intro__name">Максим&nbsp;Тарасов</h1>
+      <p class="intro__hi">{t('intro.hi')}</p>
+      <h1 class="intro__name">{t('intro.name')}</h1>
     </div>
     <div class="block">
       <p>
-        Я фронтенд-разработчик влюблённый в веб, доступность, интерфейсы и с
-        желанием создавать лучшие UI&nbsp;и&nbsp;UX
+        {t('intro.description')}
       </p>
     </div>
     <div class="block">
       <p class="block__description">
-        Профессиональный опыт преимущественно связан с продуктовой разработкой в
-        scrum-команде, а именно:
+        {t('experience.description')}
       </p>
       <div class="block__content">
         <Cards as="ul" className="purge-ul" bentoCols={6}>
@@ -34,48 +41,44 @@ import './MainPage.css';
             bentoWidth={4}
           >
             <Throphy slot="icon" />
-            <span slot="title">Масштабные решения</span>
+            <span slot="title">{t('card.scale.title')}</span>
             <span slot="description">
-              Разработка международного мультиязычного продукта
+              {t('card.scale.description')}
               <Link href="https://www.etagi.com/" target="_blank">
                 www.etagi.com
-              </Link> с более чем 3&nbsp;000&nbsp;000 уникальных посетителей в месяц
+              </Link>
             </span>
           </CardsItem>
           <CardsItem as="li" bentoWidth={2}>
             <MagicWand slot="icon" />
-            <span slot="title">Улучшение продуктов</span>
+            <span slot="title">{t('card.improvement.title')}</span>
             <span slot="description">
-              Рефакторинг и оптимизация кодовой базы, повышение метрик и показателей
+              {t('card.improvement.description')}
             </span>
           </CardsItem>
           <CardsItem as="li" bentoWidth={6}>
             <BoxIso slot="icon" />
-            <span slot="title">Собственный ui-kit</span>
+            <span slot="title">{t('card.uikit.title')}</span>
             <span slot="description">
-              Реализация
+              {t('card.uikit.description_pre')}
               <Link href="https://storybook.etagi.com/" target="_blank">
                 storybook.etagi.com
               </Link>
-              как личного проекта в рамках компании. Участие в дизайне,
-              разработка, документация и интеграция во флагманский продукт
-              компании
+              {t('card.uikit.description')}
             </span>
           </CardsItem>
           <CardsItem as="li" bentoWidth={3}>
             <Sparks slot="icon" />
-            <span slot="title">Общее развитие</span>
+            <span slot="title">{t('card.development.title')}</span>
             <span slot="description">
-              Внедрение новых инструментов и полезных практик,
-              оптимизация и улучшение процессов
+              {t('card.development.description')}
             </span>
           </CardsItem>
           <CardsItem as="li" bentoWidth={3}>
             <Community slot="icon" />
-            <span slot="title">Командная работа</span>
+            <span slot="title">{t('card.teamwork.title')}</span>
             <span slot="description">
-              Активное участие в различных митингах, проведение код-ревью,
-              менторство и помощь членам команды
+              {t('card.teamwork.description')}
             </span>
           </CardsItem>
         </Cards>

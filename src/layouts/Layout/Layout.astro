@@ -1,18 +1,22 @@
 ---
+import { getLangFromUrl, useTranslations } from '../../i18n';
 import './Layout.css';
 
 interface Props {
   title: string;
+  lang?: string;
 }
 
-const { title } = Astro.props;
+const { title, lang } = Astro.props;
+const currentLang = lang || getLangFromUrl(Astro.url);
+const t = useTranslations(currentLang);
 ---
 
 <!doctype html>
-<html lang="ru">
+<html lang={currentLang}>
   <head>
     <meta charset="UTF-8" />
-    <meta name="description" content="Личный сайт Максима Тарасова, фронтенд-разработчика" />
+    <meta name="description" content={t('site.description')} />
     <meta name="viewport" content="width=device-width" />
     <link
       rel="icon"

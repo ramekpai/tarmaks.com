@@ -1,0 +1,17 @@
+---
+import { getStaticPaths } from '../../i18n/utils';
+import { getLangFromUrl, useTranslations } from '../../i18n';
+import MainPageContent from '../../content/MainPage/MainPage.astro';
+import Footer from '../../layouts/Footer/Footer.astro';
+import Layout from '../../layouts/Layout/Layout.astro';
+
+export { getStaticPaths };
+
+const lang = getLangFromUrl(Astro.url);
+const t = useTranslations(lang);
+---
+
+<Layout title={t('site.title')}>
+  <MainPageContent lang={lang} />
+  <Footer lang={lang} />
+</Layout>
