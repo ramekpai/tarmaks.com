@@ -1,21 +1,15 @@
 import { defineMiddleware } from 'astro:middleware';
 import { ui, defaultLang } from './i18n';
 
+const LANG_CODE_REGEX = /^\/([a-z]{2})(\/.*)?$/;
+
 function getPreferredLocale(request: Request): string | null {
   const acceptLanguage = request.headers.get('accept-language');
   if (!acceptLanguage) return null;
   
-  const languages = acceptLanguage
-    .split(',')
-    .map(lang => {
-      const [code, q = '1'] = lang.trim().split(';q=');
-      return { code: code.split('-')[0], quality: parseFloat(q) };
-    })
-    .sort((a, b) => b.quality - a.quality);
-  
-  for (const { code } of languages) {
-    if (code in ui) {
-      return code;
+  for (const lang of Object.keys(ui)) {
+    if (acceptLanguage.includes(lang)) {
+      return lang;
     }
   }
   
@@ -26,17 +20,22 @@ export const onRequest = defineMiddleware((context, next) => {
   const { url, redirect, request } = context;
   const pathname = url.pathname;
   
-  const pathSegments = pathname.split('/').filter(Boolean);
-  const potentialLang = pathSegments[0];
+  if (pathname === '/') {
+    const preferredLocale = getPreferredLocale(request);
+    const targetLocale = preferredLocale || defaultLang;
+    return redirect(`/${targetLocale}/`, 301);
+  }
   
-  if (potentialLang && potentialLang.length === 2) {
+  const match = pathname.match(LANG_CODE_REGEX);
+  if (match) {
+    const potentialLang = match[1];
     if (!(potentialLang in ui)) {
       const preferredLocale = getPreferredLocale(request);
       const targetLocale = preferredLocale || defaultLang;
       
-      const restPath = pathname.slice(potentialLang.length + 1);
+      const restPath = match[2] || '/';
       const newPath = `/${targetLocale}${restPath}`;
-      return redirect(newPath, 302);
+      return redirect(newPath, 301);
     }
   }
   
