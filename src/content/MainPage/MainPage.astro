@@ -1,5 +1,5 @@
 ---
-import { getLangFromUrl, useTranslations } from '../../i18n';
+import { getLangFromUrl, useTranslations, ui } from '../../i18n';
 import BoxIso from '../../Icons/BoxIso.astro';
 import Community from '../../Icons/Community.astro';
 import MagicWand from '../../Icons/MagicWand.astro';
@@ -15,7 +15,7 @@ export interface Props {
 }
 
 const { lang } = Astro.props;
-const currentLang = lang || getLangFromUrl(Astro.url);
+const currentLang = (lang || getLangFromUrl(Astro.url)) as keyof typeof ui;
 const t = useTranslations(currentLang);
 ---
 
