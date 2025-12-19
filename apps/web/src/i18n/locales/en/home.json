@@ -1,0 +1,13 @@
+{
+  "title": "Maksim Tarasov",
+  "subtitle": "Frontend Developer",
+  "description": "Hi! I'm Maksim. I build modern web applications.",
+  "meta": {
+    "title": "Maksim Tarasov — Frontend Developer",
+    "description": "Frontend developer portfolio. React, TypeScript, modern web technologies."
+  },
+  "cta": {
+    "projects": "View Projects",
+    "contact": "Get in Touch"
+  }
+}

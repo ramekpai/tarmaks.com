@@ -1,0 +1,18 @@
+{
+  "nav": {
+    "home": "Home",
+    "about": "About",
+    "projects": "Projects",
+    "contact": "Contact"
+  },
+  "footer": {
+    "copyright": "© {{year}} Maksim Tarasov. All rights reserved."
+  },
+  "language": {
+    "ru": "Русский",
+    "en": "English"
+  },
+  "loading": "Loading...",
+  "error": "Error",
+  "retry": "Retry"
+}

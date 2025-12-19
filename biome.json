@@ -1,45 +1,43 @@
 {
-  "$schema": "https://biomejs.dev/schemas/1.8.3/schema.json",
-  "formatter": {
-    "indentStyle": "space",
-    "indentWidth": 2,
-    "lineWidth": 80
-  },
+  "$schema": "https://biomejs.dev/schemas/1.9.4/schema.json",
   "organizeImports": {
     "enabled": true
   },
   "linter": {
     "enabled": true,
     "rules": {
-      "recommended": false,
+      "recommended": true,
+      "complexity": {
+        "noUselessFragments": "warn"
+      },
+      "correctness": {
+        "noUnusedImports": "error",
+        "noUnusedVariables": "warn"
+      },
       "style": {
-        "useNodejsImportProtocol": "error"
+        "noNonNullAssertion": "off",
+        "useConst": "error",
+        "useImportType": "error"
+      },
+      "suspicious": {
+        "noExplicitAny": "warn"
       }
     }
   },
+  "formatter": {
+    "enabled": true,
+    "indentStyle": "space",
+    "indentWidth": 2,
+    "lineWidth": 100
+  },
   "javascript": {
     "formatter": {
-      "trailingCommas": "all",
       "quoteStyle": "single",
-      "semicolons": "always"
+      "semicolons": "always",
+      "trailingCommas": "es5"
     }
   },
-  "css": {
-    "formatter": {
-      "enabled": true,
-      "indentStyle": "space",
-      "indentWidth": 2,
-      "quoteStyle": "single"
-    }
-  },
-  "json": {
-    "parser": {
-      "allowComments": true,
-      "allowTrailingCommas": true
-    },
-    "formatter": {
-      "indentStyle": "space",
-      "trailingCommas": "none"
-    }
+  "files": {
+    "ignore": ["node_modules", "dist", ".git", "*.min.js", "pnpm-lock.yaml"]
   }
 }

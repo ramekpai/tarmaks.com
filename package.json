@@ -1,20 +1,27 @@
 {
+  "name": "tarmaks",
   "private": true,
-  "packageManager": "pnpm@8.15.0",
+  "packageManager": "pnpm@9.15.0",
   "scripts": {
-    "start": "astro dev",
-    "build": "astro check && astro build",
-    "preview": "astro preview",
-    "astro": "astro",
-    "lint:check": "biome check --write"
-  },
-  "dependencies": {
-    "@astrojs/check": "0.9.4",
-    "astro": "5.11.0",
-    "classnames": "2.5.1"
+    "dev": "pnpm -r --parallel dev",
+    "dev:api": "pnpm --filter @tarmaks/api dev",
+    "dev:web": "pnpm --filter @tarmaks/web dev",
+    "build": "pnpm -r build",
+    "build:api": "pnpm --filter @tarmaks/api build",
+    "build:web": "pnpm --filter @tarmaks/web build",
+    "start": "pnpm --filter @tarmaks/api start",
+    "test": "pnpm -r test",
+    "test:run": "pnpm -r test:run",
+    "lint": "biome check .",
+    "lint:fix": "biome check --write .",
+    "format": "biome format --write .",
+    "typecheck": "pnpm -r typecheck",
+    "db:push": "pnpm --filter @tarmaks/api db:push",
+    "db:studio": "pnpm --filter @tarmaks/api db:studio",
+    "clean": "rm -rf node_modules apps/*/node_modules packages/*/node_modules"
   },
   "devDependencies": {
-    "@biomejs/biome": "2.1.1",
-    "typescript": "5.8.3"
+    "@biomejs/biome": "^1.9.4",
+    "typescript": "^5.7.2"
   }
 }

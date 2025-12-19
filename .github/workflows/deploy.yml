@@ -1,71 +1,52 @@
-name: Deploy to Server
+name: Deploy
 
 on:
   push:
-    branches: [ main ]
+    branches: [main]
   workflow_dispatch:
 
 jobs:
-  deploy:
+  build-and-deploy:
     runs-on: ubuntu-latest
-    
+
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
-    
-    - name: Install pnpm
-      uses: pnpm/action-setup@v2
-      with:
-        version: 8.15.0
-        run_install: false
-    
-    - name: Setup Node.js
-      uses: actions/setup-node@v4
-      with:
-        node-version-file: '.nvmrc'
-        cache: 'pnpm'
-    
-    - name: Install dependencies
-      run: pnpm install
-    
-    - name: Build project
-      run: pnpm run build
-    
-    - name: Deploy to server
-      uses: appleboy/ssh-action@v1.0.3
-      with:
-        host: ${{ secrets.HOST }}
-        username: ${{ secrets.USERNAME }}
-        key: ${{ secrets.SSH_PRIVATE_KEY }}
-        port: 22
-        script: |
-          # Backup old dist directory if it exists
-          if [ -d "${{ secrets.DEPLOY_PATH }}/dist" ]; then
-            mv ${{ secrets.DEPLOY_PATH }}/dist ${{ secrets.DEPLOY_PATH }}/dist.backup.$(date +%Y%m%d_%H%M%S)
-          fi
-          
-          mkdir -p ${{ secrets.DEPLOY_PATH }}/dist
-    
-    - name: Copy files to server
-      uses: appleboy/scp-action@v0.1.7
-      with:
-        host: ${{ secrets.HOST }}
-        username: ${{ secrets.USERNAME }}
-        key: ${{ secrets.SSH_PRIVATE_KEY }}
-        port: 22
-        source: "dist"
-        target: "${{ secrets.DEPLOY_PATH }}/"
-    
-    - name: Set correct permissions
-      uses: appleboy/ssh-action@v1.0.3
-      with:
-        host: ${{ secrets.HOST }}
-        username: ${{ secrets.USERNAME }}
-        key: ${{ secrets.SSH_PRIVATE_KEY }}
-        port: 22
-        script: |
-          # Remove old backups, keeping the last 3
-          cd ${{ secrets.DEPLOY_PATH }}
-          ls -1t dist.backup.* 2>/dev/null | tail -n +4 | xargs -r rm -rf
-          
-          echo "Deployment completed successfully!"
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 9
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Lint & Typecheck
+        run: |
+          pnpm run lint
+          pnpm run typecheck
+
+      - name: Run tests
+        run: pnpm run test:run
+
+      - name: Build
+        run: pnpm run build
+
+      - name: Deploy to server
+        uses: appleboy/ssh-action@v1.0.0
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          username: ${{ secrets.SERVER_USER }}
+          key: ${{ secrets.SERVER_SSH_KEY }}
+          script: |
+            cd /var/www/tarmaks.com
+            git pull origin main
+            pnpm install --frozen-lockfile
+            pnpm run build
+            pm2 restart tarmaks-api || pm2 start apps/api/dist/index.js --name tarmaks-api

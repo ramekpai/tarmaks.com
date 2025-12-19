@@ -1,0 +1,35 @@
+{
+  "title": "Steam Wishlist Comparison",
+  "description": "Compare wishlists across multiple Steam accounts and find the best prices.",
+  "meta": {
+    "title": "Steam Wishlist Comparison — Tarmaks",
+    "description": "Tool for comparing Steam wishlist with regional price analysis."
+  },
+  "accounts": {
+    "title": "Accounts",
+    "add": "Add Account",
+    "remove": "Remove",
+    "empty": "No accounts added",
+    "hint": "Add at least 2 accounts to compare"
+  },
+  "region": {
+    "select": "Select region",
+    "russia": "Russia",
+    "kazakhstan": "Kazakhstan",
+    "turkey": "Turkey"
+  },
+  "wishlist": {
+    "games": "games in wishlist",
+    "empty": "Wishlist is empty or private"
+  },
+  "compare": {
+    "button": "Compare Wishlists",
+    "loading": "Loading prices: {{current}}/{{total}}",
+    "result": "Comparison Result",
+    "bestPrice": "Best price"
+  },
+  "errors": {
+    "minAccounts": "Add at least 2 accounts",
+    "loadFailed": "Failed to load data"
+  }
+}
