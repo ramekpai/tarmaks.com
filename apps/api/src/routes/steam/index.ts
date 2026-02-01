@@ -12,6 +12,6 @@ steamRoutes.route('/prices', pricesRoutes);
 steamRoutes.get('/', (c) => {
   return c.json({
     name: 'Steam API',
-    endpoints: ['/auth', '/auth/callback', '/prices'],
+    endpoints: ['/auth', '/auth/callback', '/prices', '/prices/games'],
   });
 });

@@ -1,22 +1,7 @@
 import { and, eq } from 'drizzle-orm';
 import { db, schema } from '../db';
-
-// Exchange rates to USD (approximate)
-const EXCHANGE_RATES: Record<string, number> = {
-  USD: 1,
-  EUR: 1.08,
-  GBP: 1.27,
-  RUB: 0.011,
-  KZT: 0.002,
-  TRY: 0.031,
-  UAH: 0.024,
-  PLN: 0.25,
-  BRL: 0.2,
-  ARS: 0.0011,
-  CNY: 0.14,
-  JPY: 0.0067,
-  INR: 0.012,
-};
+import { steamQueue } from './steamQueue';
+import { exchangeRateService } from './exchangeRates';
 
 // Cache TTL: 6 hours
 const CACHE_TTL = 6 * 60 * 60 * 1000;
@@ -25,6 +10,10 @@ const CACHE_TTL = 6 * 60 * 60 * 1000;
 const REFRESH_COOLDOWN = 5 * 60 * 1000; // 5 minutes between global refreshes
 let lastGlobalRefresh = 0;
 let isRefreshing = false;
+
+// Track rate limiting to dynamically adjust delays
+let consecutiveRateLimits = 0;
+let lastRateLimitTime = 0;
 
 interface PriceInfo {
   appId: string;
@@ -77,30 +66,89 @@ export class PriceCacheService {
     const now = Date.now();
     const staleTime = new Date(now - CACHE_TTL);
 
+    // First, check cache for all combinations
+    const allCombinations: Array<{ appId: string; region: string; cached: PriceInfo | null }> = [];
+    
     for (const appId of appIds) {
       result.prices[appId] = {};
-
       for (const region of regions) {
-        // Try cache first
         const cached = await this.getCachedPrice(appId, region, staleTime);
-
+        allCombinations.push({ appId, region, cached });
+        
         if (cached) {
           result.prices[appId][region] = { ...cached, fromCache: true };
           result.stats.cacheHits++;
-        } else {
-          // Fetch from Steam
-          const price = await this.fetchPriceFromSteam(appId, region);
-          result.prices[appId][region] = { ...price, fromCache: false };
+        }
+      }
+    }
 
-          if (price.available) {
-            await this.cachePrice(price);
-            result.stats.cacheMisses++;
-          } else {
+    // Filter out cached items - only fetch what's missing
+    const toFetch = allCombinations.filter((c) => !c.cached);
+
+    if (toFetch.length === 0) {
+      return result; // All cached, nothing to fetch
+    }
+
+    // Process missing items by grouping them by region to minimize requests
+    // Group by region
+    const regionGroups: Record<string, string[]> = {};
+    for (const { appId, region } of toFetch) {
+      if (!regionGroups[region]) {
+        regionGroups[region] = [];
+      }
+      regionGroups[region].push(appId);
+    }
+
+    // Process each region
+    const regionsToFetch = Object.keys(regionGroups);
+    for (let i = 0; i < regionsToFetch.length; i++) {
+      const region = regionsToFetch[i];
+      if (!region) continue;
+      
+      const appIds = regionGroups[region];
+      if (!appIds) continue;
+
+      // Process in batches of 50 (Steam limit is 100, but 50 is safer)
+      const BATCH_SIZE = 50;
+      for (let j = 0; j < appIds.length; j += BATCH_SIZE) {
+        const batchAppIds = appIds.slice(j, j + BATCH_SIZE);
+        
+        try {
+          // Use the global queue to fetch prices
+          const prices = await steamQueue.add(() => this.fetchBatchPricesFromSteam(batchAppIds, region));
+          
+          // Process results
+          for (const appId of batchAppIds) {
+            if (!result.prices[appId]) {
+              result.prices[appId] = {};
+            }
+            
+            const price = prices[appId];
+            if (price) {
+              // Cache in background
+              this.cachePrice(price).catch((err) => 
+                console.error(`Failed to cache price for ${appId}/${region}:`, err)
+              );
+              result.prices[appId][region] = { ...price, fromCache: false };
+              result.stats.cacheMisses++;
+            } else {
+              // Failed to get price for this specific app in the batch
+              const unavailable = this.createUnavailablePrice(appId, region);
+              result.prices[appId][region] = unavailable;
+              result.stats.errors++;
+            }
+          }
+        } catch (error) {
+          console.error(`Error fetching batch prices for region ${region}:`, error);
+          // Mark all in batch as unavailable
+          for (const appId of batchAppIds) {
+            if (!result.prices[appId]) {
+              result.prices[appId] = {};
+            }
+            const unavailable = this.createUnavailablePrice(appId, region);
+            result.prices[appId][region] = unavailable;
             result.stats.errors++;
           }
-
-          // Small delay to avoid rate limiting
-          await this.delay(200);
         }
       }
     }
@@ -222,74 +270,122 @@ export class PriceCacheService {
     }
   }
 
-  private async fetchPriceFromSteam(appId: string, region: string): Promise<PriceInfo> {
+  private async fetchBatchPricesFromSteam(appIds: string[], region: string): Promise<Record<string, PriceInfo>> {
+    const results: Record<string, PriceInfo> = {};
+    const appIdsStr = appIds.join(',');
+    
     try {
-      const url = `https://store.steampowered.com/api/appdetails?appids=${appId}&cc=${region.toLowerCase()}&filters=price_overview`;
+      // Use filters=price_overview to allow multiple appids and reduce payload
+      const url = `https://store.steampowered.com/api/appdetails?appids=${appIdsStr}&cc=${region.toLowerCase()}&filters=price_overview`;
 
-      const response = await fetch(url, {
-        headers: {
-          'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36',
-          Accept: 'application/json',
-        },
-      });
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 15000); // 15 second timeout for batch
 
-      // Check for HTML response (rate limited)
-      const contentType = response.headers.get('content-type');
-      if (contentType?.includes('text/html')) {
-        console.warn(`Rate limited for ${appId}/${region}`);
-        return this.createUnavailablePrice(appId, region);
+      try {
+        const response = await fetch(url, {
+          headers: {
+            'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36',
+            Accept: 'application/json',
+          },
+          signal: controller.signal,
+        });
+        
+        clearTimeout(timeoutId);
+
+        // Check for HTML response (rate limited)
+        const contentType = response.headers.get('content-type');
+        if (contentType?.includes('text/html') || response.status === 429) {
+          const now = Date.now();
+          consecutiveRateLimits++;
+          lastRateLimitTime = now;
+          console.warn(`Rate limited for batch in region ${region} (Status: ${response.status})`);
+          
+          // Increase delay for future requests
+          steamQueue.setDelay(5000); // 5 seconds delay if rate limited
+          
+          return results; // Return empty, will be handled as unavailable
+        }
+
+        // Reset delay if successful
+        if (consecutiveRateLimits > 0) {
+          consecutiveRateLimits = 0;
+          steamQueue.setDelay(300); // Reset to 300ms
+        }
+
+        if (!response.ok) {
+          console.error(`Steam API error: ${response.status} ${response.statusText}`);
+          return results;
+        }
+
+        const data = (await response.json()) as SteamAppDetailsResponse;
+
+        // Process each app in the response
+        for (const appId of appIds) {
+          const appData = data[appId];
+
+          if (!appData?.success) {
+            results[appId] = this.createUnavailablePrice(appId, region);
+            continue;
+          }
+
+          if (appData.data?.is_free) {
+            results[appId] = {
+              appId,
+              region,
+              currency: null,
+              price: 0,
+              priceFormatted: 'Free',
+              discount: 0,
+              priceUsd: 0,
+              available: true,
+              fromCache: false,
+            };
+            continue;
+          }
+
+          const priceOverview = appData.data?.price_overview;
+
+          if (!priceOverview) {
+            results[appId] = this.createUnavailablePrice(appId, region);
+            continue;
+          }
+
+          const currency = priceOverview.currency;
+          const price = priceOverview.final;
+          
+          // Get rate (Currency per USD)
+          const rates = await exchangeRateService.getRates();
+          const rate = rates[currency] || 1; // Default to 1 if missing to avoid division by zero
+          
+          // Calculate USD price: Price / Rate
+          // Example: 100 RUB / 90 RUB/USD = 1.11 USD
+          const priceUsd = rate > 0 ? (price / 100) / rate : 0;
+
+          results[appId] = {
+            appId,
+            region,
+            currency,
+            price,
+            priceFormatted: priceOverview.final_formatted,
+            discount: priceOverview.discount_percent || 0,
+            priceUsd,
+            available: true,
+            fromCache: false,
+          };
+        }
+      } catch (fetchError: any) {
+        clearTimeout(timeoutId);
+        if (fetchError.name === 'AbortError') {
+          console.warn(`Request timeout for batch in region ${region}`);
+        } else {
+          throw fetchError;
+        }
       }
-
-      if (!response.ok) {
-        return this.createUnavailablePrice(appId, region);
-      }
-
-      const data = (await response.json()) as SteamAppDetailsResponse;
-      const appData = data[appId];
-
-      if (!appData?.success) {
-        return this.createUnavailablePrice(appId, region);
-      }
-
-      if (appData.data?.is_free) {
-        return {
-          appId,
-          region,
-          currency: null,
-          price: 0,
-          priceFormatted: 'Free',
-          discount: 0,
-          priceUsd: 0,
-          available: true,
-          fromCache: false,
-        };
-      }
-
-      const priceOverview = appData.data?.price_overview;
-
-      if (!priceOverview) {
-        return this.createUnavailablePrice(appId, region);
-      }
-
-      const currency = priceOverview.currency;
-      const price = priceOverview.final;
-      const rate = EXCHANGE_RATES[currency] || 0.01;
-
-      return {
-        appId,
-        region,
-        currency,
-        price,
-        priceFormatted: priceOverview.final_formatted,
-        discount: priceOverview.discount_percent || 0,
-        priceUsd: (price / 100) * rate,
-        available: true,
-        fromCache: false,
-      };
     } catch (error) {
-      console.error(`Error fetching price for ${appId}/${region}:`, error);
-      return this.createUnavailablePrice(appId, region);
+      console.error(`Error fetching batch prices for region ${region}:`, error);
     }
+
+    return results;
   }
 
   private createUnavailablePrice(appId: string, region: string): PriceInfo {

@@ -9,14 +9,12 @@
     "title": "Accounts",
     "add": "Add Account",
     "remove": "Remove",
+    "clear": "Clear all",
     "empty": "No accounts added",
     "hint": "Add at least 2 accounts to compare"
   },
   "region": {
-    "select": "Select region",
-    "russia": "Russia",
-    "kazakhstan": "Kazakhstan",
-    "turkey": "Turkey"
+    "select": "Select region"
   },
   "wishlist": {
     "games": "games in wishlist",
@@ -24,9 +22,17 @@
   },
   "compare": {
     "button": "Compare Wishlists",
-    "loading": "Loading prices: {{current}}/{{total}}",
+    "loading": "Loading: {{current}}/{{total}}",
     "result": "Comparison Result",
-    "bestPrice": "Best price"
+    "game": "Game",
+    "bestPrice": "Best price",
+    "currency": "Currency",
+    "search_placeholder": "Search games...",
+    "sort_name_asc": "Name (A-Z)",
+    "sort_name_desc": "Name (Z-A)",
+    "sort_price_asc": "Lowest Price",
+    "sort_discount_desc": "Best Discount",
+    "hide_no_prices": "Hide unavailable"
   },
   "errors": {
     "minAccounts": "Add at least 2 accounts",

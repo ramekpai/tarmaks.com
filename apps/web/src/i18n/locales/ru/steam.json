@@ -9,14 +9,12 @@
     "title": "Аккаунты",
     "add": "Добавить аккаунт",
     "remove": "Удалить",
+    "clear": "Очистить",
     "empty": "Нет добавленных аккаунтов",
     "hint": "Добавьте минимум 2 аккаунта для сравнения"
   },
   "region": {
-    "select": "Выберите регион",
-    "russia": "Россия",
-    "kazakhstan": "Казахстан",
-    "turkey": "Турция"
+    "select": "Выберите регион"
   },
   "wishlist": {
     "games": "игр в списке",
@@ -24,9 +22,17 @@
   },
   "compare": {
     "button": "Сравнить списки",
-    "loading": "Загрузка цен: {{current}}/{{total}}",
+    "loading": "Загрузка: {{current}}/{{total}}",
     "result": "Результат сравнения",
-    "bestPrice": "Лучшая цена"
+    "game": "Игра",
+    "bestPrice": "Лучшая цена",
+    "currency": "Валюта",
+    "search_placeholder": "Поиск игр...",
+    "sort_name_asc": "Название (А-Я)",
+    "sort_name_desc": "Название (Я-А)",
+    "sort_price_asc": "Сначала дешевые",
+    "sort_discount_desc": "По скидке",
+    "hide_no_prices": "Скрыть без цен"
   },
   "errors": {
     "minAccounts": "Добавьте минимум 2 аккаунта",

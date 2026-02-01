@@ -4,7 +4,7 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "tsx watch src/index.ts",
+    "dev": "DOTENV_CONFIG_PATH=../../.env tsx watch src/index.ts",
     "build": "tsup src/index.ts --format esm --dts",
     "start": "node dist/index.js",
     "typecheck": "tsc --noEmit",
@@ -19,6 +19,7 @@
     "@hono/zod-validator": "^0.4.2",
     "@tarmaks/shared": "workspace:*",
     "better-sqlite3": "^11.6.0",
+    "dotenv": "^17.2.3",
     "drizzle-orm": "^0.38.2",
     "hono": "^4.6.14",
     "zod": "^3.24.1"
