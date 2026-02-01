@@ -53,8 +53,9 @@ jobs:
         username: ${{ secrets.USERNAME }}
         key: ${{ secrets.SSH_PRIVATE_KEY }}
         port: 22
-        source: "dist"
+        source: "apps/index/dist"
         target: "${{ secrets.DEPLOY_PATH }}/"
+        strip_components: 2
     
     - name: Set correct permissions
       uses: appleboy/ssh-action@v1.0.3
